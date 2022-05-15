@@ -1,23 +1,79 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import Header from "./components/layout/header";
+import Footer from "./components/layout/footer";
+import Exercises from './components/Exercises/index'
+import { exercises, muscles } from "./components/services/store";
 
 function App() {
+  const [newExercises, setExercises] = useState([]);
+  const [newExercise, setExercise] = useState({});
+  const [category,setCategory]=useState('');
+
+  useEffect(() => {
+
+    // get exercises by its muscles
+    async function getExercisesByMuscles() {
+     
+      const newExercises = Object.entries(exercises.reduce((exercises , exercise)=>{   // get exercises by its muscles
+
+        //destruction of muscles
+
+        const {muscles} = exercise;
+        
+        exercises[muscles]= exercises[muscles]
+         ? 
+         [...exercises[muscles],exercise] 
+         :[exercise];
+
+        return exercises
+
+      },{})
+      )
+      setExercises(newExercises);
+    }
+    getExercisesByMuscles()
+  }, []);
+
+  //to handel category of exercises
+  function handelSelectCategory(category){
+
+    setCategory(category)
+    
+    
+  }
+
+   //to handel selected exercise desc
+   function handelSelectExercise(id){
+
+    const newExercise = exercises.find(ex=> ex.id === id)
+    setExercise(newExercise)
+ 
+    
+
+    
+  }
+
+
+ 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header />
+      <Footer 
+      category={category}
+      onSelect={handelSelectCategory}
+      muscles={muscles}
+      
+      />
+
+      <Exercises
+      exercise={newExercise}
+      category={category}
+      onSelect={handelSelectExercise}
+      exercises ={newExercises}
+
+      />
+
+     
     </div>
   );
 }
